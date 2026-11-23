@@ -27,6 +27,17 @@ OUTPUT_PATH = os.path.join(OUTPUT_DIR, "entry.txt")
 
 
 def main() -> None:
+    # The gate allows 1-240 characters of non-whitespace UTF-8 text.
+    # Fail loudly instead of writing an invalid entry if the sentence
+    # ever drifts outside that range (for example after a future edit).
+    if not (1 <= len(SENTENCE) <= 240):
+        raise SystemExit(
+            f"sentence is {len(SENTENCE)} characters, must be 1-240"
+        )
+    if not SENTENCE.strip():
+        raise SystemExit("sentence must not be only whitespace")
+    if "\n" in SENTENCE or "\r" in SENTENCE:
+        raise SystemExit("sentence must be a single line")
     # Never remove the output directory itself: the grader may run this
     # with a root-owned output directory inside a sticky parent, where
     # deleting the directory fails with EPERM. Create it if missing,
